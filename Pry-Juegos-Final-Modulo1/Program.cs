@@ -8,7 +8,24 @@ namespace Pry_Juegos_Final_Modulo1
     {
         static void Main(string[] args)
         {
+            // Personaliza el aspecto visual
+            // Fondo Azul oscuro y Texto blanco
+
+            Console.BackgroundColor = ConsoleColor.DarkBlue;
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Clear();  // Limpia la consola para aplicar los cambios
+
+
             int opcion;
+
+            // Defino el Menù de de la aplicaciòn 
+            // 1. Sudoku ==> llamo a la funciòn JugarSudoku()
+            // 2. Piedra, Papel o Tijera ==> llamo a la funciòn JugarPiedraPapelTijera()
+            // 3. Ahorcado ==> llamo a la funciòn JugarAhorcado()
+            // 4. Salir ==> realizo un break y salgo del bucle.
+
+            // Aqui manejo el bucle do..While para mantener  el menù hasta que el usuario elija la opciòn salir (4)
+
             do
             {
                 Console.Clear();
@@ -19,11 +36,14 @@ namespace Pry_Juegos_Final_Modulo1
                 Console.WriteLine("4. Salir");
                 Console.Write("Selecciona una opción: ");
 
+                // Aqui valido con el bloque While que la opciòn ingresada se encuentre en 1 y 4
                 while (!int.TryParse(Console.ReadLine(), out opcion) || opcion < 1 || opcion > 4)
                 {
                     Console.Write("Opción inválida. Ingresa un número entre 1 y 4: ");
                 }
 
+                // Aqui mediante un Switch defino que opciòn escogio el usuario y lanzo la funciòn a seguir 
+                // si el usuario selecciona 4 pues la aplicaciòn "Sale"
                 switch (opcion)
                 {
                     case 1:
@@ -46,19 +66,25 @@ namespace Pry_Juegos_Final_Modulo1
         // ================== Juego: Sudoku ==================
         static void JugarSudoku()
         {
-            Console.Clear();
+            Console.Clear(); // Limpia la Consola
+
+            // Solicita que el usuario ingrese el tamaño del bloque a definir para el juego
+
             Console.Write("Ingrese el tamaño del tablero de Sudoku (por ejemplo, 3 para 3x3): ");
             int tamaño = int.Parse(Console.ReadLine());
 
+            // Crea un arreglo bidimensional para el tablero a jugar con el tamaño definido por el usuario
             int[,] tablero = new int[tamaño, tamaño];
             Random rand = new Random();
 
+            // Llama a la funciòn RellenarCasilleros, para inicializar el Juego, eviando el arreglo establecido, el tamaño definido, y el valor aleatorio  creado
             RellenarCasilleros(tablero, tamaño, rand);
 
+            // Aplico un bucle While (infinito) hasta que el usuario teclee "salir"
             while (true)
             {
-                Console.Clear();
-                MostrarTablero(tablero, tamaño);
+                Console.Clear(); // Limpio la consola
+                MostrarTablero(tablero, tamaño);   // Imprimir los numero en la consola
                 Console.WriteLine("Ingrese fila,columna,valor (ej: 1,2,3) o 'salir' para terminar:");
 
                 string entrada = Console.ReadLine();
@@ -101,8 +127,15 @@ namespace Pry_Juegos_Final_Modulo1
 
         static void MostrarTablero(int[,] tablero, int tamaño)
         {
+            // Descripciòn de la funciòn :  imprime en la consola el tablero del juego Sudoku, mostrando:
+            //                              "." - punto : si una celda está vacía.
+            //                              nùmero : si la celda ya tiene un valor (del arreglo)
+
             for (int fila = 0; fila < tamaño; fila++)
             {
+                // Es equivalente a for (int col = 0; col < tamaño; col++), , pero usando LINQ para generar
+                // una secuencia de números consecutivos.
+                // "Enumerable.Range(0, tamaño)" : se usa para generar una secuencia de números enteros consecutivos.
                 foreach (var col in Enumerable.Range(0, tamaño))
                 {
                     int val = tablero[fila, col];
@@ -114,8 +147,13 @@ namespace Pry_Juegos_Final_Modulo1
 
         static bool EsMovimientoValido(int[,] tablero, int fila, int columna, int valor, int tamaño)
         {
+            // Descripciòn de la funciòn: Determinar si colocar un número (valor) en una celda específica (fila, columna)
+            //                            es válido según las reglas básicas del Sudoku (sin repetir en fila ni columna).
+
+            // Este bucle "for" recorre toda las filas y columnas.
             for (int i = 0; i < tamaño; i++)
             {
+                // Revisa si ya existe el mismo número en la misma fila Y Revisa si ya existe el mismo número en la misma columna.
                 if (tablero[fila, i] == valor || tablero[i, columna] == valor)
                     return false;
             }
@@ -124,16 +162,20 @@ namespace Pry_Juegos_Final_Modulo1
 
         static void RellenarCasilleros(int[,] tablero, int tamaño, Random rand)
         {
+            // Descripciòn de la funciòn : Colocar una cantidad inicial de números válidos de forma aleatoria en el tablero de Sudoku
+            //                              para que el jugador tenga una base sobre la cual completar el resto.
+            // La funciòn no retorna valor  : static void
             int cantidad = tamaño;
 
             for (int i = 0; i < cantidad; i++)
             {
-                int fila = rand.Next(tamaño);
-                int columna = rand.Next(tamaño);
-                int valor = rand.Next(1, tamaño + 1);
+                int fila = rand.Next(tamaño);   // Define la fila aleatoria
+                int columna = rand.Next(tamaño);  // Define la Columna aleatoria
+                int valor = rand.Next(1, tamaño + 1); // Define el Valor Aleatorio
 
                 if (EsMovimientoValido(tablero, fila, columna, valor, tamaño))
                 {
+                    // Si es verdadero esto quiere decir valido, asigna el valor en el arrego 
                     tablero[fila, columna] = valor;
                 }
                 else
